@@ -22,6 +22,10 @@
 const express = require("express");
 const app = express();
 const db = require("./db");
+const passport = require("./auth");
+
+
+ 
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());    //req.body
@@ -31,14 +35,15 @@ app.use(bodyParser.json());    //req.body
 const personRoutes = require('./routes/personRoutes');
 const menuRoutes = require('./routes/menuRoutes');
 
-//use the routers
-app.use('/person', personRoutes);
-app.use('/items', menuRoutes);
-
+const localAuthMiddleware = passport.authenticate('local', {session: false});
 app.get('/', (req, res) => {    
   res.send('Hello Welcome to the hotel');
 })
 
+
+//use the routers
+app.use('/person', localAuthMiddleware, personRoutes);
+app.use('/items', menuRoutes);
 
 
 
